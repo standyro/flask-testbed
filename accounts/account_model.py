@@ -18,28 +18,28 @@ def create_app():
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True)
-    password = db.Column(db.UnicodeText(800), unique=True)
-    salt = db.Column(db.UnicodeText(128))
+    password = db.Column(db.String(800), unique=True)
+    salt = db.Column(db.String(512))
 
     def __init__(self, username, password):
         self.username = username
-        self.password = self.encrypt(password)
+        self.salt = unicode(os.urandom(32), errors='ignore')
+        self.password = self.encrypt(password, self.salt)
 
         
     def __repr__(self):
         return '<User %r>' % self.username
 
     
-    def encrypt(self, password):
-        salt = buffer(os.urandom(32))
-        self.salt = salt
+    def encrypt(self, password, salt):
+        print salt
         return hashlib.sha512(salt+password).hexdigest()
     
     
     def authenticate(self, username, password):
         if (self.username == username):
-            if (self.encrypt(password) == self.password):
+            if (self.encrypt(password, self.salt) == self.password):
                 return True
-
+            
         return False
 

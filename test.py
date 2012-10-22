@@ -1,5 +1,5 @@
 from flask import Flask, url_for, redirect, session, render_template
-from accounts import *
+from accounts.accounts import *
 
 
 app = Flask(__name__)

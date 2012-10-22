@@ -9,7 +9,7 @@ accounts = Blueprint('accounts', __name__,
 
 
 def create_user(username, password):
-    # db.init_app()
+
     new_user = User(username, password)
     db.session.add(new_user)
     db.session.commit()
@@ -24,14 +24,16 @@ def login():
 
         check_user = User.query.filter_by(username=user).first()
         if(check_user):
+
             if (check_user.authenticate(user, password)):
+
                 session['username'] = user
                 return redirect(url_for('index'))
 
-        return render_template("login.html")
+    return render_template("login.html")
                 
 
 @accounts.route('/logout', methods=['GET'])
 def logout():
     session.pop('username', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('accounts.login'))
